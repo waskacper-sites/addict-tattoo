@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addict Tattoo - Łukasz Walczyński | Studio Tatuażu i Piercingu Nowy Sącz</title>
+    <meta name="description" content="Addict Tattoo w Nowym Sączu przy ul. Lwowskiej 238 A. Autorskie tatuaże, mroczny realizm, portrety, dotwork oraz profesjonalny piercing. Zarezerwuj termin 24/7 online.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons 6.4 (Free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        crimson: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                            950: '#4c0519',
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Syne', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cinzel: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Style Studia -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#070709] text-zinc-100 min-h-screen flex flex-col relative selection:bg-red-600 selection:text-white">
+
+    <!-- Efekt w tle: pływające subtelne czerwone orby -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- ==================== DEMO BAR (GÓRNY PASEK DEMONSTRACYJNY) ==================== -->
+    <div id="demo-banner" class="relative z-50 bg-gradient-to-r from-red-950 via-zinc-950 to-red-950 border-b border-red-600/40 text-xs py-2.5 px-4 shadow-[0_4px_20px_rgba(220,38,38,0.25)]">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-zinc-300">
+                <span class="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span class="font-semibold text-white">Projekt demonstracyjny:</span>
+                <span class="text-zinc-300">Addict Tattoo • Studio Tatuażu & Piercingu</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="openDemoContactModal()" class="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold transition text-xs flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-envelope text-[11px]"></i>
+                    <span>Skontaktuj się w sprawie strony</span>
+                </button>
+                <a href="#admin" onclick="navigateToAdmin()" class="px-3 py-1.5 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 border border-red-500/40 text-red-300 hover:text-white transition text-xs font-mono flex items-center gap-1">
+                    <i class="fa-solid fa-lock text-[10px]"></i>
+                    <span>Panel Admina</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- GŁÓWNY WIDOK KLIENTA -->
+    <div id="client-view-container" class="relative z-10 min-h-screen flex flex-col">
+
+        <!-- ==================== BANER COOKIES ==================== -->
+        <div id="cookie-banner" class="fixed bottom-6 left-6 right-6 max-w-md mx-auto sm:mx-0 sm:left-6 z-50 luxury-card-red border border-red-500/35 rounded-2xl p-5 shadow-2xl backdrop-blur-xl flex flex-col gap-3 transition-all duration-500 translate-y-full opacity-0 hidden">
+            <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0 mt-0.5">
+                    <i class="fa-solid fa-cookie-bite text-base"></i>
+                </div>
+                <p class="text-xs text-zinc-300 leading-relaxed">
+                    Strona korzysta z plików cookies i pamięci podręcznej przeglądarki, aby zapewnić płynne działanie kalendarza rezerwacji oraz panelu klienta.
+                </p>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-1">
+                <button onclick="openPrivacyModal()" class="text-xs text-zinc-400 hover:text-red-300 underline">Więcej informacji</button>
+                <button onclick="acceptCookies()" class="btn-crimson px-5 py-2 rounded-xl text-xs uppercase tracking-wider font-bold">Zgoda</button>
+            </div>
+        </div>
+
+        <!-- ==================== STICKY NAVBAR ==================== -->
+        <header id="main-nav" class="sticky top-0 z-40 bg-[#070709]/90 backdrop-blur-xl border-b border-red-600/20 transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <!-- Logo i Brand (Okrągły emblemat studia) -->
+                    <a href="#" class="flex items-center gap-3.5 group">
+                        <div class="relative w-14 h-14 rounded-full overflow-hidden border border-red-500/40 p-1 bg-black/90 shadow-[0_0_15px_rgba(220,38,38,0.35)] group-hover:border-red-400 transition flex items-center justify-center flex-shrink-0">
+                            <img src="logo.png" alt="Addict Tattoo - Studio Tatuażu i Piercingu Nowy Sącz" class="w-full h-full object-contain filter brightness-110">
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-display text-lg sm:text-xl font-extrabold tracking-tight text-white group-hover:text-red-400 transition">
+                                ADDICT <span class="text-red-500">TATTOO</span>
+                            </span>
+                            <span class="text-[10px] text-zinc-400 tracking-wider font-cinzel">
+                                Łukasz Walczyński • Nowy Sącz
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- Uproszczone Menu Desktop -->
+                    <nav class="hidden md:flex items-center space-x-7 text-sm font-medium text-zinc-300">
+                        <a href="#portfolio" class="hover:text-red-400 transition duration-150">Prace</a>
+                        <a href="#benefits" class="hover:text-red-400 transition duration-150">Dlaczego strona</a>
+                        <a href="#rezerwacja" class="hover:text-red-400 transition duration-150">Rezerwacja</a>
+                        <a href="#testimonials" class="hover:text-red-400 transition duration-150">Opinie</a>
+                        <a href="#faq" class="hover:text-red-400 transition duration-150">FAQ</a>
+                        <a href="#contact" class="hover:text-red-400 transition duration-150">Kontakt</a>
+                    </nav>
+
+                    <!-- Prawa sekcja (Telefon & CTA) -->
+                    <div class="hidden lg:flex items-center gap-4">
+                        <a href="tel:+48504989112" class="flex items-center gap-2 text-xs font-semibold text-zinc-300 hover:text-red-300 px-3 py-2 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-red-500/40 transition">
+                            <i class="fa-solid fa-phone text-red-500"></i>
+                            <span>504 989 112</span>
+                        </a>
+                        <a href="#rezerwacja" class="btn-crimson px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold inline-flex items-center gap-2">
+                            <span>Zarezerwuj Wizytę</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+
+                    <!-- Hamburger Button Mobilny -->
+                    <div class="flex items-center md:hidden gap-2">
+                        <a href="tel:+48504989112" class="p-2.5 rounded-lg bg-zinc-900 border border-red-500/30 text-red-400" aria-label="Zadzwoń do studia">
+                            <i class="fa-solid fa-phone text-sm"></i>
+                        </a>
+                        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-red-400" aria-label="Menu nawigacji">
+                            <i id="mobile-menu-icon" class="fa-solid fa-bars text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Drawer -->
+            <div id="mobile-drawer" class="hidden md:hidden bg-[#0c0c10] border-b border-red-500/20 px-4 pt-3 pb-6 space-y-3">
+                <a href="#portfolio" onclick="toggleMobileMenu()" class="block py-2 text-base text-zinc-300 hover:text-red-400 border-b border-zinc-800/60">Portfolio prac</a>
+                <a href="#benefits" onclick="toggleMobileMenu()" class="block py-2 text-base text-zinc-300 hover:text-red-400 border-b border-zinc-800/60">Dlaczego strona WWW</a>
+                <a href="#rezerwacja" onclick="toggleMobileMenu()" class="block py-2 text-base text-red-400 font-semibold border-b border-zinc-800/60">Kalendarz Rezerwacji 24/7</a>
+                <a href="#testimonials" onclick="toggleMobileMenu()" class="block py-2 text-base text-zinc-300 hover:text-red-400 border-b border-zinc-800/60">Opinie Google (5.0 ★)</a>
+                <a href="#faq" onclick="toggleMobileMenu()" class="block py-2 text-base text-zinc-300 hover:text-red-400 border-b border-zinc-800/60">Najczęstsze pytania</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="block py-2 text-base text-zinc-300 hover:text-red-400">Kontakt i dojazd</a>
+
+                <div class="pt-3 flex flex-col gap-2">
+                    <a href="tel:+48504989112" class="flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-900 border border-red-500/40 text-red-400 font-semibold text-sm">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>Zadzwoń: 504 989 112</span>
+                    </a>
+                    <a href="#rezerwacja" onclick="toggleMobileMenu()" class="btn-crimson py-3 rounded-xl text-center text-sm font-bold">
+                        Zarezerwuj Sesję Online
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== HERO SECTION ==================== -->
+        <section class="relative pt-16 pb-20 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto mb-14 reveal-on-scroll">
+                    
+                    <!-- Badge -->
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full red-badge text-xs font-semibold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                        <span>Studio Tatuażu & Piercingu • Nowy Sącz</span>
+                    </div>
+
+                    <!-- Mocny Główny Nagłówek -->
+                    <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6">
+                        Sztuka, Która <span class="text-crimson-gradient">Uzależnia.</span>
+                    </h1>
+
+                    <!-- Spokojny, czysty podtytuł -->
+                    <p class="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-10 font-normal">
+                        Mroczny realizm, autorskie portrety, dopracowany dotwork oraz profesjonalny piercing. Każdy projekt tworzony z pasją i bezkompromisową dbałością o detale.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a href="#rezerwacja" class="btn-crimson w-full sm:w-auto px-8 py-4 rounded-xl text-sm uppercase tracking-wider font-bold inline-flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <span>Zarezerwuj Termin Online</span>
+                        </a>
+                        <a href="#portfolio" class="w-full sm:w-auto px-7 py-4 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-white transition text-sm font-semibold inline-flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye text-red-400"></i>
+                            <span>Zobacz Prace</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3 Kafelki Zaufania (Zoptymalizowane pod szerokość) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto reveal-on-scroll reveal-delay-2">
+                    
+                    <!-- Kafelek 1: Ocena Google -->
+                    <div class="luxury-card-red p-5 rounded-2xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0">
+                            <i class="fa-solid fa-star text-lg"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-display text-2xl font-bold text-white">5.0 ★</span>
+                                <span class="text-xs text-amber-400 font-bold">Google</span>
+                            </div>
+                            <p class="text-xs text-zinc-400 truncate">45 autentycznych opinii klientów</p>
+                        </div>
+                    </div>
+
+                    <!-- Kafelek 2: Studio & Lokalizacja -->
+                    <div class="luxury-card-red p-5 rounded-2xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0">
+                            <i class="fa-solid fa-location-dot text-lg"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="font-display text-base font-bold text-white truncate">ul. Lwowska 238 A</div>
+                            <p class="text-xs text-zinc-400 truncate">33-300 Nowy Sącz • Studio & Piercing</p>
+                        </div>
+                    </div>
+
+                    <!-- Kafelek 3: Zapisy Online 24/7 -->
+                    <div class="luxury-card-red p-5 rounded-2xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0">
+                            <i class="fa-solid fa-bolt text-lg"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="font-display text-base font-bold text-white">Zapisy Online 24/7</div>
+                            <p class="text-xs text-zinc-400 truncate">Tatuaż & profesjonalny piercing</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PORTFOLIO PRAC ==================== -->
+        <section id="portfolio" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-14 reveal-on-scroll">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full red-badge text-xs font-semibold uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-camera text-red-400"></i>
+                        <span>Galeria Wybranych Realizacji</span>
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight mb-3">
+                        Wybrane Prace <span class="text-crimson-gradient">Studia</span>
+                    </h2>
+                    <p class="text-zinc-400 text-sm">
+                        Każdy tatuaż wykonany w Addict Tattoo to unikalna, autorska kompozycja dopasowana do anatomii ciała.
+                    </p>
+                </div>
+
+                <!-- Siatka Portfolio (4 wyselekcjonowane zdjęcia o wysokiej rozdzielczości) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <!-- Praca 1 -->
+                    <div class="group relative rounded-2xl overflow-hidden luxury-card-red border border-red-500/25 cursor-pointer reveal-on-scroll reveal-delay-1" onclick="openLightbox(0)">
+                        <div class="aspect-[3/4] w-full overflow-hidden bg-black">
+                            <img src="portfolio-1.png" alt="Realizm & Portret - Addict Tattoo" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 filter brightness-95 group-hover:brightness-110">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 flex flex-col justify-end p-5">
+                            <span class="text-[10px] text-red-400 font-mono uppercase tracking-wider font-semibold">Realizm & Cieniowanie</span>
+                            <h3 class="font-display text-base font-bold text-white mt-0.5">Portret Wojowniczki</h3>
+                            <p class="text-xs text-zinc-300 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                Głębokie cieniowanie, mikrodetale i korona na przedramieniu.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Praca 2 -->
+                    <div class="group relative rounded-2xl overflow-hidden luxury-card-red border border-red-500/25 cursor-pointer reveal-on-scroll reveal-delay-2" onclick="openLightbox(1)">
+                        <div class="aspect-[3/4] w-full overflow-hidden bg-black">
+                            <img src="portfolio-2.png" alt="Zagojone Plecy - Addict Tattoo" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 filter brightness-95 group-hover:brightness-110">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 flex flex-col justify-end p-5">
+                            <span class="text-[10px] text-red-400 font-mono uppercase tracking-wider font-semibold">Duża Kompozycja</span>
+                            <h3 class="font-display text-base font-bold text-white mt-0.5">Zagojone Całe Plecy</h3>
+                            <p class="text-xs text-zinc-300 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                Mroczny realizm, czaszka, portret kobiety i krajobraz grozy.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Praca 3 -->
+                    <div class="group relative rounded-2xl overflow-hidden luxury-card-red border border-red-500/25 cursor-pointer reveal-on-scroll reveal-delay-3" onclick="openLightbox(2)">
+                        <div class="aspect-[3/4] w-full overflow-hidden bg-black">
+                            <img src="portfolio-3.png" alt="Dark Realism & Horror - Addict Tattoo" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 filter brightness-95 group-hover:brightness-110">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 flex flex-col justify-end p-5">
+                            <span class="text-[10px] text-red-400 font-mono uppercase tracking-wider font-semibold">Dark Realism</span>
+                            <h3 class="font-display text-base font-bold text-white mt-0.5">Żniwiarz & As Pik</h3>
+                            <p class="text-xs text-zinc-300 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                Ponury żniwiarz, kości do gry i dynamiczna kompozycja na nodze.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Praca 4 -->
+                    <div class="group relative rounded-2xl overflow-hidden luxury-card-red border border-red-500/25 cursor-pointer reveal-on-scroll reveal-delay-4" onclick="openLightbox(3)">
+                        <div class="aspect-[3/4] w-full overflow-hidden bg-black">
+                            <img src="portfolio-4.png" alt="Dark Art & Dotwork - Addict Tattoo" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 filter brightness-95 group-hover:brightness-110">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300 flex flex-col justify-end p-5">
+                            <span class="text-[10px] text-red-400 font-mono uppercase tracking-wider font-semibold">Dotwork & Czaszki</span>
+                            <h3 class="font-display text-base font-bold text-white mt-0.5">Trzy Czaszki na Ramieniu</h3>
+                            <p class="text-xs text-zinc-300 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                Motyw „nic nie widzę, nie słyszę, nie mówię” w kropkowym stylu.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== DLACZEGO WARTO MIEĆ STRONĘ WWW ==================== -->
+        <section id="benefits" class="py-20 bg-zinc-950/60 border-t border-b border-red-600/15">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-14 reveal-on-scroll">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full red-badge text-xs font-semibold uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-globe text-red-400"></i>
+                        <span>Wizerunek & Automatyzacja</span>
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight mb-3">
+                        Dlaczego Warto Mieć <span class="text-crimson-gradient">Stronę WWW?</span>
+                    </h2>
+                    <p class="text-zinc-400 text-sm">
+                        Profesjonalna strona to nie tylko prestiż, ale realna oszczędność czasu tatuatora i wygoda dla każdego klienta.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Kafel 1: Zapisy 24/7 -->
+                    <div class="luxury-card-red p-6 rounded-2xl reveal-on-scroll reveal-delay-1">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-4">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <h4 class="font-display text-base font-bold text-white mb-2">Rezerwacja 24/7</h4>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Klienci zapisują się o dowolnej porze, także w nocy czy w weekendy – bez czekania na Twoją odpowiedź w wiadomości prywatnej.
+                        </p>
+                    </div>
+
+                    <!-- Kafel 2: Oszczędność czasu i mniej spamu -->
+                    <div class="luxury-card-red p-6 rounded-2xl reveal-on-scroll reveal-delay-2">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-4">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <h4 class="font-display text-base font-bold text-white mb-2">Mniej Spamu w DM</h4>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Koniec z niekończącymi się pytaniami o wolne terminy i cennik na Instagramie. Wszystkie informacje i wzory trafiają od razu w jedno miejsce.
+                        </p>
+                    </div>
+
+                    <!-- Kafel 3: Wizerunek i Prestiż -->
+                    <div class="luxury-card-red p-6 rounded-2xl reveal-on-scroll reveal-delay-3">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-4">
+                            <i class="fa-solid fa-gem"></i>
+                        </div>
+                        <h4 class="font-display text-base font-bold text-white mb-2">Prestiż & Zaufanie</h4>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Własna, dopracowana strona internetowa wyróżnia studio z tłumu i buduje wizerunek artysty klasy premium już przy pierwszym kontakcie.
+                        </p>
+                    </div>
+
+                    <!-- Kafel 4: Więcej Klientów z Google -->
+                    <div class="luxury-card-red p-6 rounded-2xl reveal-on-scroll reveal-delay-4">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-4">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h4 class="font-display text-base font-bold text-white mb-2">Klienci z Google</h4>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Osoby szukające tatuażu i piercingu w Nowym Sączu przez wyszukiwarkę trafią bezpośrednio na Twoje portfolio i kalendarz rezerwacji.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== INTERAKTYWNY KREATOR REZERWACJI (WIZARD) ==================== -->
+        <section id="rezerwacja" class="py-20 bg-zinc-950/80 border-t border-b border-red-600/20 relative">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-12 reveal-on-scroll">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full red-badge text-xs font-semibold uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-calendar-check text-red-400"></i>
+                        <span>Rezerwacja Sesji & Piercingu Online</span>
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight mb-3">
+                        Zarezerwuj Swój <span class="text-crimson-gradient">Termin</span>
+                    </h2>
+                    <p class="text-zinc-400 text-xs sm:text-sm">
+                        Wybierz styl tatuażu lub piercing, wskaż dogodną godzinę w kalendarzu i opisz swój pomysł.
+                    </p>
+                </div>
+
+                <!-- Kontener Główny Wizarda -->
+                <div class="luxury-card-red rounded-3xl p-6 sm:p-10 border border-red-500/30 reveal-on-scroll reveal-delay-1">
+                    
+                    <!-- Stepper (Pasek Postępu) -->
+                    <div class="mb-10">
+                        <div class="grid grid-cols-4 gap-2 text-center">
+                            <!-- Krok 1 -->
+                            <div id="step-indicator-1" class="flex flex-col items-center">
+                                <div class="step-badge w-9 h-9 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center border-2 border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)]">
+                                    1
+                                </div>
+                                <span class="step-label text-[11px] font-semibold text-red-400 mt-2 truncate w-full">Styl & Pomysł</span>
+                            </div>
+
+                            <!-- Krok 2 -->
+                            <div id="step-indicator-2" class="flex flex-col items-center opacity-40">
+                                <div class="step-badge w-9 h-9 rounded-full bg-zinc-900 text-zinc-400 font-bold text-xs flex items-center justify-center border border-zinc-700">
+                                    2
+                                </div>
+                                <span class="step-label text-[11px] font-semibold text-zinc-400 mt-2 truncate w-full">Termin</span>
+                            </div>
+
+                            <!-- Krok 3 -->
+                            <div id="step-indicator-3" class="flex flex-col items-center opacity-40">
+                                <div class="step-badge w-9 h-9 rounded-full bg-zinc-900 text-zinc-400 font-bold text-xs flex items-center justify-center border border-zinc-700">
+                                    3
+                                </div>
+                                <span class="step-label text-[11px] font-semibold text-zinc-400 mt-2 truncate w-full">Kontakt</span>
+                            </div>
+
+                            <!-- Krok 4 -->
+                            <div id="step-indicator-4" class="flex flex-col items-center opacity-40">
+                                <div class="step-badge w-9 h-9 rounded-full bg-zinc-900 text-zinc-400 font-bold text-xs flex items-center justify-center border border-zinc-700">
+                                    4
+                                </div>
+                                <span class="step-label text-[11px] font-semibold text-zinc-400 mt-2 truncate w-full">Podsumowanie</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KROK 1: Wybór Usługi, Stylu i Inspiracji -->
+                    <div id="wizard-step-1" class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-3">
+                                1. Wybierz Usługę / Styl Tatuażu
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                
+                                <div class="service-select-card p-4 rounded-xl cursor-pointer active" onclick="selectStyleCard('realizm', 'Realizm Czarno-Szary / Portret')">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-display font-bold text-sm text-white">Realizm Czarno-Szary</span>
+                                        <i class="fa-solid fa-circle-check text-red-500 text-sm check-icon"></i>
+                                    </div>
+                                    <p class="text-[11px] text-zinc-400">Portrety kobiece, głębokie cienie i fotorealizm.</p>
+                                </div>
+
+                                <div class="service-select-card p-4 rounded-xl cursor-pointer" onclick="selectStyleCard('darkhorror', 'Mroczny Realizm & Horror')">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-display font-bold text-sm text-white">Mroczny Realizm & Czaszki</span>
+                                        <i class="fa-regular fa-circle text-zinc-600 text-sm check-icon"></i>
+                                    </div>
+                                    <p class="text-[11px] text-zinc-400">Czaszki, żniwiarze, plecy i mroczne klimaty.</p>
+                                </div>
+
+                                <div class="service-select-card p-4 rounded-xl cursor-pointer" onclick="selectStyleCard('dotwork', 'Dark Art & Dotwork')">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-display font-bold text-sm text-white">Dark Art & Dotwork</span>
+                                        <i class="fa-regular fa-circle text-zinc-600 text-sm check-icon"></i>
+                                    </div>
+                                    <p class="text-[11px] text-zinc-400">Cieniowanie kropkowe, mistycyzm i kontur.</p>
+                                </div>
+
+                                <div class="service-select-card p-4 rounded-xl cursor-pointer" onclick="selectStyleCard('piercing', 'Piercing & Kolczykowanie')">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-display font-bold text-sm text-white">Piercing & Kolczykowanie</span>
+                                        <i class="fa-regular fa-circle text-zinc-600 text-sm check-icon"></i>
+                                    </div>
+                                    <p class="text-[11px] text-zinc-400">Bezpieczne, sterylne przekłucia ciała i doradztwo.</p>
+                                </div>
+
+                                <div class="service-select-card p-4 rounded-xl cursor-pointer" onclick="selectStyleCard('konsultacja', 'Konsultacja & Projekt Autorski')">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-display font-bold text-sm text-white">Konsultacja & Projekt</span>
+                                        <i class="fa-regular fa-circle text-zinc-600 text-sm check-icon"></i>
+                                    </div>
+                                    <p class="text-[11px] text-zinc-400">Omówienie pomysłu, wycena i przygotowanie wzoru.</p>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="form-placement" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                    2. Miejsce na ciele
+                                </label>
+                                <input type="text" id="form-placement" placeholder="np. Przedramię, całe plecy, łydka, ucho" class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition">
+                            </div>
+
+                            <div>
+                                <label for="form-size" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                    3. Przybliżony rozmiar
+                                </label>
+                                <input type="text" id="form-size" placeholder="np. ok. 15x10 cm, cały rękaw, pojedynczy kolczyk" class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="form-desc" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                4. Opis Twojego pomysłu
+                            </label>
+                            <textarea id="form-desc" rows="3" placeholder="Opisz krótko swój zamysł, motywy, inspiracje lub specyfikę przekłucia..." class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition resize-none"></textarea>
+                        </div>
+
+                        <!-- Upload Inspiracji z Canvas API Compression -->
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                5. Zdjęcie referencyjne / inspiracja (opcjonalnie)
+                            </label>
+                            <div class="relative border-2 border-dashed border-zinc-800 hover:border-red-500/50 rounded-2xl p-5 text-center transition cursor-pointer bg-black/40 group">
+                                <input type="file" id="form-photo-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handlePhotoUpload(event)">
+                                <div id="upload-idle-state" class="space-y-2">
+                                    <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mx-auto group-hover:scale-110 transition">
+                                        <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                                    </div>
+                                    <p class="text-xs text-zinc-300">Kliknij lub przeciągnij zdjęcie inspiracji</p>
+                                    <p class="text-[10px] text-zinc-500">JPG, PNG (automatyczna bezpieczna kompresja)</p>
+                                </div>
+                                <div id="upload-preview-state" class="hidden flex items-center justify-center gap-4">
+                                    <img id="upload-thumb" src="" alt="Podgląd inspiracji" class="w-14 h-14 rounded-lg object-cover border border-red-500/40">
+                                    <div class="text-left">
+                                        <p id="upload-filename" class="text-xs font-semibold text-white truncate max-w-[200px]">plik.jpg</p>
+                                        <button type="button" onclick="removeUploadedPhoto(event)" class="text-[11px] text-red-400 hover:text-red-300 underline mt-1">Usuń zdjęcie</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Przycisk Dalej -->
+                        <div class="pt-4 flex justify-end">
+                            <button onclick="goToStep(2)" class="btn-crimson px-7 py-3 rounded-xl text-xs uppercase tracking-wider font-bold inline-flex items-center gap-2">
+                                <span>Przejdź do Kalendarza</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KROK 2: Kalendarz Miesięczny i Wybór Godziny -->
+                    <div id="wizard-step-2" class="hidden space-y-6">
+                        <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+                            <div>
+                                <h3 class="font-display font-bold text-base text-white">Wybierz Dogodny Termin</h3>
+                                <p class="text-xs text-zinc-400 mt-0.5">Godziny pracy: Poniedziałek – Piątek 10:00 – 16:00 (Sobota & Niedziela zamknięte)</p>
+                            </div>
+                            <span class="text-xs text-red-400 font-mono font-semibold">Krok 2 z 4</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                            <!-- Kalendarz Miesięczny -->
+                            <div class="lg:col-span-7 luxury-card-red p-5 rounded-2xl border border-red-500/25">
+                                <div class="flex items-center justify-between mb-4">
+                                    <button onclick="prevCalendarMonth()" class="p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition">
+                                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                                    </button>
+                                    <h4 id="calendar-month-year" class="font-display text-sm font-bold text-white tracking-wide">
+                                        Październik 2026
+                                    </h4>
+                                    <button onclick="nextCalendarMonth()" class="p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition">
+                                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Dni Tygodnia -->
+                                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                                    <span>Pn</span>
+                                    <span>Wt</span>
+                                    <span>Śr</span>
+                                    <span>Cz</span>
+                                    <span>Pt</span>
+                                    <span class="text-red-900">So</span>
+                                    <span class="text-red-900">Nd</span>
+                                </div>
+
+                                <!-- Siatka Dni Kalendarza -->
+                                <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5">
+                                    <!-- Generowane dynamicznie w script.js -->
+                                </div>
+
+                                <!-- Legenda Kolorów -->
+                                <div class="flex items-center justify-center gap-4 text-[10px] text-zinc-400 pt-4 mt-3 border-t border-zinc-900">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        <span>Wolne</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                        <span>Ostatnie sloty</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                        <span>Zajęte / Zamknięte</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Wybór Godziny dla zaznaczonego dnia -->
+                            <div class="lg:col-span-5 space-y-4">
+                                <div class="luxury-card-red p-5 rounded-2xl border border-red-500/25">
+                                    <h4 class="font-display font-bold text-xs uppercase tracking-wider text-zinc-300 mb-1">
+                                        Dostępne godziny na dzień:
+                                    </h4>
+                                    <div id="selected-date-display" class="text-sm font-bold text-red-400 font-mono mb-4">
+                                        Wybierz dzień z kalendarza
+                                    </div>
+
+                                    <div id="time-slots-container" class="grid grid-cols-2 gap-2">
+                                        <!-- Sloty generowane w JS -->
+                                        <p class="col-span-2 text-xs text-zinc-500 py-4 text-center">
+                                            Kliknij dzień w kalendarzu, aby sprawdzić dostępne godziny.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Przyciski Nawigacji -->
+                        <div class="pt-4 flex items-center justify-between border-t border-zinc-800">
+                            <button onclick="goToStep(1)" class="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-300 transition">
+                                <i class="fa-solid fa-arrow-left text-[10px] mr-1.5"></i>
+                                <span>Wstecz</span>
+                            </button>
+                            <button id="step-2-next-btn" disabled onclick="goToStep(3)" class="btn-crimson px-7 py-3 rounded-xl text-xs uppercase tracking-wider font-bold inline-flex items-center gap-2 opacity-50 cursor-not-allowed">
+                                <span>Dane Kontaktowe</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KROK 3: Dane Kontaktowe Klienta -->
+                    <div id="wizard-step-3" class="hidden space-y-6">
+                        <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+                            <div>
+                                <h3 class="font-display font-bold text-base text-white">Twoje Dane Kontaktowe</h3>
+                                <p class="text-xs text-zinc-400 mt-0.5">Potrzebne do potwierdzenia rezerwacji terminu</p>
+                            </div>
+                            <span class="text-xs text-red-400 font-mono font-semibold">Krok 3 z 4</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="form-client-name" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                    Imię i Nazwisko *
+                                </label>
+                                <input type="text" id="form-client-name" required placeholder="np. Jan Kowalski" class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition">
+                            </div>
+
+                            <div>
+                                <label for="form-client-phone" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                    Numer Telefonu *
+                                </label>
+                                <input type="tel" id="form-client-phone" required placeholder="np. 504 989 112" class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition">
+                            </div>
+
+                            <div>
+                                <label for="form-client-email" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                    Adres E-mail *
+                                </label>
+                                <input type="email" id="form-client-email" required placeholder="np. twojmail@gmail.com" class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition">
+                            </div>
+
+                            <div>
+                                <label for="form-client-instagram" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                    Profil Instagram (opcjonalnie)
+                                </label>
+                                <input type="text" id="form-client-instagram" placeholder="@twojprofil" class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="form-client-notes" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1.5">
+                                Dodatkowe uwagi dla tatuatora / piercera (opcjonalnie)
+                            </label>
+                            <textarea id="form-client-notes" rows="2" placeholder="Alergie, preferowane znieczulenie, pytania dotyczące sesji..." class="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-zinc-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-xs text-white placeholder-zinc-500 outline-none transition resize-none"></textarea>
+                        </div>
+
+                        <!-- Przyciski Nawigacji -->
+                        <div class="pt-4 flex items-center justify-between border-t border-zinc-800">
+                            <button onclick="goToStep(2)" class="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-300 transition">
+                                <i class="fa-solid fa-arrow-left text-[10px] mr-1.5"></i>
+                                <span>Wstecz</span>
+                            </button>
+                            <button onclick="validateStep3AndProceed()" class="btn-crimson px-7 py-3 rounded-xl text-xs uppercase tracking-wider font-bold inline-flex items-center gap-2">
+                                <span>Podsumowanie Wizyty</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KROK 4: Podsumowanie i Potwierdzenie -->
+                    <div id="wizard-step-4" class="hidden space-y-6">
+                        <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+                            <div>
+                                <h3 class="font-display font-bold text-base text-white">Podsumowanie Twojej Rezerwacji</h3>
+                                <p class="text-xs text-zinc-400 mt-0.5">Sprawdź poprawność wprowadzonych danych przed zatwierdzeniem</p>
+                            </div>
+                            <span class="text-xs text-red-400 font-mono font-semibold">Krok 4 z 4</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Karta Szczegółów Wizyty -->
+                            <div class="luxury-card-red p-5 rounded-2xl border border-red-500/25 space-y-3">
+                                <div class="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <span>Termin i Usługa</span>
+                                </div>
+                                <div class="space-y-1.5 text-xs">
+                                    <div class="flex justify-between py-1 border-b border-zinc-800/80">
+                                        <span class="text-zinc-400">Usługa / Styl:</span>
+                                        <span id="summary-service" class="font-semibold text-white text-right">Realizm Czarno-Szary</span>
+                                    </div>
+                                    <div class="flex justify-between py-1 border-b border-zinc-800/80">
+                                        <span class="text-zinc-400">Data sesji:</span>
+                                        <span id="summary-date" class="font-semibold text-red-400 text-right">--</span>
+                                    </div>
+                                    <div class="flex justify-between py-1 border-b border-zinc-800/80">
+                                        <span class="text-zinc-400">Godzina:</span>
+                                        <span id="summary-time" class="font-semibold text-white text-right">--</span>
+                                    </div>
+                                    <div class="flex justify-between py-1 border-b border-zinc-800/80">
+                                        <span class="text-zinc-400">Miejsce na ciele:</span>
+                                        <span id="summary-placement" class="font-semibold text-white text-right">--</span>
+                                    </div>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-zinc-400">Przybliżony rozmiar:</span>
+                                        <span id="summary-size" class="font-semibold text-white text-right">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Karta Danych Klienta & Inspiracja -->
+                            <div class="luxury-card-red p-5 rounded-2xl border border-red-500/25 space-y-3">
+                                <div class="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-user"></i>
+                                    <span>Dane Klienta & Wzór</span>
+                                </div>
+                                <div class="space-y-1.5 text-xs">
+                                    <div class="flex justify-between py-1 border-b border-zinc-800/80">
+                                        <span class="text-zinc-400">Imię i nazwisko:</span>
+                                        <span id="summary-name" class="font-semibold text-white text-right">--</span>
+                                    </div>
+                                    <div class="flex justify-between py-1 border-b border-zinc-800/80">
+                                        <span class="text-zinc-400">Telefon:</span>
+                                        <span id="summary-phone" class="font-semibold text-white text-right">--</span>
+                                    </div>
+                                    <div class="flex justify-between py-1 border-b border-zinc-800/80">
+                                        <span class="text-zinc-400">E-mail:</span>
+                                        <span id="summary-email" class="font-semibold text-white text-right">--</span>
+                                    </div>
+                                    <div id="summary-photo-container" class="pt-1 flex items-center gap-3">
+                                        <span class="text-zinc-400 text-xs">Inspiracja:</span>
+                                        <img id="summary-photo-thumb" src="" alt="Załączone zdjęcie" class="w-10 h-10 rounded-lg object-cover border border-red-500/40">
+                                        <span class="text-[11px] text-zinc-300">Załączono plik</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Opis i uwagi -->
+                        <div class="luxury-card-red p-4 rounded-xl text-xs space-y-2 border border-zinc-800">
+                            <div>
+                                <span class="text-zinc-400 font-semibold">Opis pomysłu: </span>
+                                <span id="summary-description" class="text-zinc-200 italic">Brak dodatkowego opisu</span>
+                            </div>
+                            <div id="summary-notes-row">
+                                <span class="text-zinc-400 font-semibold">Uwagi: </span>
+                                <span id="summary-notes" class="text-zinc-200">Brak</span>
+                            </div>
+                        </div>
+
+                        <!-- Checkbox Zgody RODO -->
+                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-black/50 border border-zinc-800">
+                            <input type="checkbox" id="rodo-consent" required class="mt-0.5 rounded text-red-600 focus:ring-red-500 bg-zinc-900 border-zinc-700">
+                            <label for="rodo-consent" class="text-xs text-zinc-400 leading-relaxed cursor-pointer select-none">
+                                Wyrażam zgodę na przetwarzanie moich danych osobowych przez Addict Tattoo w celu kontaktu oraz realizacji rezerwacji terminu zgodnie z <a href="javascript:void(0)" onclick="openPrivacyModal()" class="text-red-400 underline">Polityką Prywatności</a>.
+                            </label>
+                        </div>
+
+                        <!-- Przyciski Nawigacji i Zatwierdzenia -->
+                        <div class="pt-4 flex items-center justify-between border-t border-zinc-800">
+                            <button onclick="goToStep(3)" class="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-300 transition">
+                                <i class="fa-solid fa-arrow-left text-[10px] mr-1.5"></i>
+                                <span>Wstecz</span>
+                            </button>
+                            <button onclick="submitBooking()" class="btn-crimson px-8 py-3.5 rounded-xl text-xs uppercase tracking-wider font-bold inline-flex items-center gap-2 shadow-xl">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Potwierdź i Wyślij Rezerwację</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== OPINIE GOOGLE ==================== -->
+        <section id="testimonials" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-14 reveal-on-scroll">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full red-badge text-xs font-semibold uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-star text-amber-400"></i>
+                        <span>Prawdziwe Oceny z Google</span>
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight mb-3">
+                        Co Mówią o Nas <span class="text-crimson-gradient">Klienci</span>
+                    </h2>
+                    <p class="text-zinc-400 text-sm">
+                        Średnia ocena <strong class="text-white">5.0 ★</strong> na podstawie <strong class="text-white">45 opinii</strong> w Google Maps.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Opinia 1: LenaMRA -->
+                    <div class="luxury-card-red p-6 sm:p-7 rounded-3xl flex flex-col justify-between border border-red-500/25 reveal-on-scroll reveal-delay-1">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-1 text-amber-400 text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <span class="text-[10px] text-zinc-500 font-mono">9 miesięcy temu</span>
+                            </div>
+                            <p class="text-xs text-zinc-300 leading-relaxed italic mb-6">
+                                "Najlepszy tatuator! Pełen profesjonalizm, świetna atmosfera i niesamowity talent. Efekt zawsze lepszy niż oczekiwałam. Zdecydowanie polecam !"
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-zinc-800/80 flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-xs font-bold text-red-300">
+                                L
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-xs text-white">LenaMRA</h4>
+                                <span class="text-[10px] text-zinc-500">Zweryfikowana opinia Google</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opinia 2: Emilia Mj -->
+                    <div class="luxury-card-red p-6 sm:p-7 rounded-3xl flex flex-col justify-between border border-red-500/25 reveal-on-scroll reveal-delay-2">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-1 text-amber-400 text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <span class="text-[10px] text-zinc-500 font-mono">9 miesięcy temu</span>
+                            </div>
+                            <p class="text-xs text-zinc-300 leading-relaxed italic mb-6">
+                                "Polecam z całego serca! Łukasz to prawdziwy profesjonalista i artysta w jednym. Świetne podejście do klienta, pełen spokój i dbałość o każdy detal. Tatuaż wykonany perfekcyjnie, w super atmosferze i z zachowaniem najwyższych standardów higieny. Na pewno wrócę na kolejne projekty! 🔥🔥🔥"
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-zinc-800/80 flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-xs font-bold text-red-300">
+                                E
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-xs text-white">Emilia Mj</h4>
+                                <span class="text-[10px] text-zinc-500">Lokalny przewodnik • 7 opinii</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opinia 3: Nikola Kamińska -->
+                    <div class="luxury-card-red p-6 sm:p-7 rounded-3xl flex flex-col justify-between border border-red-500/25 reveal-on-scroll reveal-delay-3">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-1 text-amber-400 text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <span class="text-[10px] text-zinc-500 font-mono">9 miesięcy temu</span>
+                            </div>
+                            <p class="text-xs text-zinc-300 leading-relaxed italic mb-6">
+                                "polecam wszystko super salon piekny czysty tatuaz w pełni zagojony pieknie wyglada"
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-zinc-800/80 flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-xs font-bold text-red-300">
+                                N
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-xs text-white">Nikola Kamińska</h4>
+                                <span class="text-[10px] text-zinc-500">Zweryfikowana opinia Google</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== FAQ (AKORDEON) ==================== -->
+        <section id="faq" class="py-20 bg-zinc-950/60 border-t border-b border-red-600/15">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-14 reveal-on-scroll">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full red-badge text-xs font-semibold uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-circle-question text-red-400"></i>
+                        <span>Najczęstsze Pytania</span>
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight mb-3">
+                        Wszystko Co Warto <span class="text-crimson-gradient">Wiedzieć</span>
+                    </h2>
+                    <p class="text-zinc-400 text-xs sm:text-sm">
+                        Krótkie i zwięzłe odpowiedzi przed Twoją wizytą na tatuaż lub piercing.
+                    </p>
+                </div>
+
+                <div class="space-y-4" id="faq-accordion-container">
+                    <!-- Pytanie 1 -->
+                    <details class="faq-item luxury-card-red rounded-2xl overflow-hidden border border-zinc-800 reveal-on-scroll">
+                        <summary class="p-5 sm:p-6 cursor-pointer flex items-center justify-between text-left select-none">
+                            <span class="font-display text-base font-bold text-white pr-4">Jak przygotować się do sesji tatuażu lub piercingu?</span>
+                            <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-red-500/30 flex items-center justify-center text-red-300 flex-shrink-0">
+                                <i class="fa-solid fa-chevron-down faq-chevron text-xs transition-transform duration-300"></i>
+                            </div>
+                        </summary>
+                        <div class="faq-content px-5 pb-6 sm:px-6 text-xs text-zinc-300 leading-relaxed border-t border-zinc-800/60 pt-4">
+                            Przed wizytą wyśpij się i zjedz sycący posiłek. Przez 24 godziny przed sesją nie spożywaj alkoholu ani leków rozrzedzających krew. Zadbaj o wygodny strój ułatwiający dostęp do tatuowanego lub przekłuwanego miejsca.
+                        </div>
+                    </details>
+
+                    <!-- Pytanie 2 -->
+                    <details class="faq-item luxury-card-red rounded-2xl overflow-hidden border border-zinc-800 reveal-on-scroll">
+                        <summary class="p-5 sm:p-6 cursor-pointer flex items-center justify-between text-left select-none">
+                            <span class="font-display text-base font-bold text-white pr-4">Czy w Addict Tattoo wykonujecie profesjonalny piercing?</span>
+                            <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-red-500/30 flex items-center justify-center text-red-300 flex-shrink-0">
+                                <i class="fa-solid fa-chevron-down faq-chevron text-xs transition-transform duration-300"></i>
+                            </div>
+                        </summary>
+                        <div class="faq-content px-5 pb-6 sm:px-6 text-xs text-zinc-300 leading-relaxed border-t border-zinc-800/60 pt-4">
+                            Tak. Jesteśmy oficjalnym studiem tatuażu i piercingu. Zabiegi przekłuwania wykonujemy w 100% sterylnym środowisku przy użyciu bezpiecznych materiałów (tytan medyczny).
+                        </div>
+                    </details>
+
+                    <!-- Pytanie 3 -->
+                    <details class="faq-item luxury-card-red rounded-2xl overflow-hidden border border-zinc-800 reveal-on-scroll">
+                        <summary class="p-5 sm:p-6 cursor-pointer flex items-center justify-between text-left select-none">
+                            <span class="font-display text-base font-bold text-white pr-4">Czy muszę posiadać gotowy wzór przed rezerwacją?</span>
+                            <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-red-500/30 flex items-center justify-center text-red-300 flex-shrink-0">
+                                <i class="fa-solid fa-chevron-down faq-chevron text-xs transition-transform duration-300"></i>
+                            </div>
+                        </summary>
+                        <div class="faq-content px-5 pb-6 sm:px-6 text-xs text-zinc-300 leading-relaxed border-t border-zinc-800/60 pt-4">
+                            Nie. Wystarczy krótki zarys pomysłu i ewentualne zdjęcia inspiracji dodane w formularzu. Łukasz Walczyński przygotowuje autorski projekt skrojony dokładnie pod Twoje preferencje.
+                        </div>
+                    </details>
+
+                    <!-- Pytanie 4 -->
+                    <details class="faq-item luxury-card-red rounded-2xl overflow-hidden border border-zinc-800 reveal-on-scroll">
+                        <summary class="p-5 sm:p-6 cursor-pointer flex items-center justify-between text-left select-none">
+                            <span class="font-display text-base font-bold text-white pr-4">Jakie są godziny otwarcia studia?</span>
+                            <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-red-500/30 flex items-center justify-center text-red-300 flex-shrink-0">
+                                <i class="fa-solid fa-chevron-down faq-chevron text-xs transition-transform duration-300"></i>
+                            </div>
+                        </summary>
+                        <div class="faq-content px-5 pb-6 sm:px-6 text-xs text-zinc-300 leading-relaxed border-t border-zinc-800/60 pt-4">
+                            Pracujemy od poniedziałku do piątku w godzinach 10:00 – 16:00. W soboty oraz niedziele studio jest nieczynne, dlatego terminy weekendowe są zablokowane w kalendarzu.
+                        </div>
+                    </details>
+
+                    <!-- Pytanie 5 -->
+                    <details class="faq-item luxury-card-red rounded-2xl overflow-hidden border border-zinc-800 reveal-on-scroll">
+                        <summary class="p-5 sm:p-6 cursor-pointer flex items-center justify-between text-left select-none">
+                            <span class="font-display text-base font-bold text-white pr-4">Jak dbać o świeży tatuaż lub piercing?</span>
+                            <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-red-500/30 flex items-center justify-center text-red-300 flex-shrink-0">
+                                <i class="fa-solid fa-chevron-down faq-chevron text-xs transition-transform duration-300"></i>
+                            </div>
+                        </summary>
+                        <div class="faq-content px-5 pb-6 sm:px-6 text-xs text-zinc-300 leading-relaxed border-t border-zinc-800/60 pt-4">
+                            Po sesji otrzymasz szczegółowe instrukcje pielęgnacji oraz dedykowany opatrunek. Do pełnego wygojenia unikaj basenu, sauny, solarium i bezpośredniej ekspozycji na ostre słońce.
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== KONTAKT & MAPA ==================== -->
+        <section id="contact" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- Dane kontaktowe -->
+                    <div class="lg:col-span-5 space-y-6 reveal-on-scroll">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full red-badge text-xs font-semibold uppercase tracking-wider">
+                            <i class="fa-solid fa-location-arrow text-red-400"></i>
+                            <span>Odwiedź Nasze Studio</span>
+                        </div>
+                        
+                        <h2 class="font-display text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                            Skontaktuj Się z <span class="text-crimson-gradient">Nami</span>
+                        </h2>
+
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            Czekamy na Ciebie przy ul. Lwowskiej 238 A w Nowym Sączu. Zarezerwuj termin przez stronę lub zadzwoń bezpośrednio.
+                        </p>
+
+                        <div class="space-y-3 pt-2">
+                            <!-- Telefon -->
+                            <a href="tel:+48504989112" class="luxury-card-red p-4 rounded-xl flex items-center gap-4 hover:border-red-400 transition block">
+                                <div class="w-10 h-10 rounded-lg bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Telefon Bezpośredni</div>
+                                    <div class="text-sm font-bold text-white">504 989 112</div>
+                                </div>
+                            </a>
+
+                            <!-- Adres -->
+                            <div class="luxury-card-red p-4 rounded-xl flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Adres Studia</div>
+                                    <div class="text-sm font-bold text-white">Lwowska 238 A, 33-300 Nowy Sącz</div>
+                                </div>
+                            </div>
+
+                            <!-- Godziny -->
+                            <div class="luxury-card-red p-4 rounded-xl flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Godziny Otwarcia</div>
+                                    <div class="text-xs font-semibold text-white">Pn–Pt: 10:00–16:00 | Sob–Nd: Zamknięte</div>
+                                </div>
+                            </div>
+
+                            <!-- Instagram -->
+                            <a href="https://www.instagram.com/addict.tattoo.ns/" target="_blank" rel="noopener noreferrer" class="luxury-card-red p-4 rounded-xl flex items-center gap-4 hover:border-red-400 transition block">
+                                <div class="w-10 h-10 rounded-lg bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 flex-shrink-0">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Instagram</div>
+                                    <div class="text-sm font-bold text-white">@addict.tattoo.ns</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Mapa / Lokalizacja Embed -->
+                    <div class="lg:col-span-7 reveal-on-scroll">
+                        <div class="luxury-card-red rounded-3xl overflow-hidden p-2 border border-red-500/30 shadow-2xl">
+                            <div class="aspect-[16/10] w-full rounded-2xl overflow-hidden bg-zinc-900 relative">
+                                <iframe 
+                                    title="Lokalizacja Addict Tattoo - Nowy Sącz, Lwowska 238 A" 
+                                    src="https://maps.google.com/maps?q=Lwowska%20238A,%20Nowy%20S%C4%85cz&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                                    class="w-full h-full border-0 filter grayscale invert contrast-125 opacity-85 hover:opacity-100 transition duration-300"
+                                    allowfullscreen="" 
+                                    loading="lazy">
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== FOOTER ==================== -->
+        <footer class="mt-auto bg-[#050507] border-t border-red-600/20 py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-zinc-900">
+                    <!-- Brand -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full overflow-hidden border border-red-500/40 p-1 bg-black flex items-center justify-center">
+                            <img src="logo.png" alt="Addict Tattoo" class="w-full h-full object-contain">
+                        </div>
+                        <div>
+                            <span class="font-display text-base font-bold text-white">ADDICT <span class="text-red-500">TATTOO</span></span>
+                            <p class="text-[10px] text-zinc-500 uppercase tracking-wider font-cinzel">Łukasz Walczyński • Lwowska 238 A, Nowy Sącz</p>
+                        </div>
+                    </div>
+
+                    <!-- Social / Telefon -->
+                    <div class="flex items-center gap-4 text-xs">
+                        <a href="tel:+48504989112" class="text-zinc-400 hover:text-red-400 transition">
+                            <i class="fa-solid fa-phone text-red-500 mr-1.5"></i>504 989 112
+                        </a>
+                        <span class="text-zinc-700">•</span>
+                        <a href="https://www.instagram.com/addict.tattoo.ns/" target="_blank" rel="noopener noreferrer" class="text-zinc-400 hover:text-red-400 transition">
+                            <i class="fa-brands fa-instagram text-red-500 mr-1.5"></i>Instagram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+                    <p>© 2026 Addict Tattoo - Łukasz Walczyński. Wszelkie prawa zastrzeżone.</p>
+                    <div class="flex items-center gap-6">
+                        <a href="javascript:void(0)" onclick="openPrivacyModal()" class="hover:text-zinc-300 transition">Polityka Prywatności</a>
+                        <!-- Dyskretny link do Panelu Admina w stopce -->
+                        <a href="#admin" onclick="navigateToAdmin()" class="text-zinc-600 hover:text-red-400/80 transition flex items-center gap-1.5 font-mono text-[11px]">
+                            <i class="fa-solid fa-lock text-[10px]"></i>
+                            <span>Panel Studia</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ==================== WIDOK PANELU ADMINISTRATORA (#admin) ==================== -->
+    <div id="admin-view-container" class="hidden relative z-20 min-h-screen bg-[#070709] text-zinc-100 flex flex-col">
+        <!-- Górny pasek admina -->
+        <header class="bg-zinc-950 border-b border-red-600/30 px-4 sm:px-8 py-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full border border-red-500/40 p-1 bg-black flex items-center justify-center">
+                        <img src="logo.png" alt="Addict Tattoo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <h1 class="font-display text-base font-bold text-white">ADDICT <span class="text-red-500">TATTOO</span> • Panel Studia</h1>
+                        <span class="text-[10px] text-zinc-500 font-mono">Zarządzanie Rezerwacjami & Kalendarz</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="navigateToClient()" class="px-3.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs text-zinc-300 transition inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                        <span>Powrót do strony</span>
+                    </button>
+                    <button id="admin-logout-btn" onclick="adminLogout()" class="hidden px-3.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/50 border border-rose-500/40 text-xs text-rose-300 transition inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket text-[10px]"></i>
+                        <span>Wyloguj</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Ekran logowania admina -->
+        <div id="admin-login-screen" class="flex-1 flex items-center justify-center p-4">
+            <div class="w-full max-w-md luxury-card-red rounded-3xl p-8 border border-red-500/30 shadow-2xl">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 rounded-full border border-red-500/40 p-2 bg-black mx-auto mb-3 shadow-[0_0_20px_rgba(220,38,38,0.3)] flex items-center justify-center">
+                        <img src="logo.png" alt="Addict Tattoo" class="w-full h-full object-contain">
+                    </div>
+                    <h2 class="font-display text-xl font-bold text-white">Logowanie do Panelu</h2>
+                    <p class="text-xs text-zinc-400 mt-1">Dostęp autoryzowany dla właściciela studia</p>
+                </div>
+
+                <!-- Podpowiedź demo (usuwana w wersji produkcyjnej) -->
+                <div id="admin-demo-hint" class="mb-5 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-200">
+                    <div class="font-semibold text-red-400 mb-0.5">Dane demonstracyjne:</div>
+                    <div class="font-mono text-[11px] text-zinc-300">Login: <span class="text-white">admin@addict-tattoo.pl</span></div>
+                    <div class="font-mono text-[11px] text-zinc-300">Hasło: <span class="text-white">admin123</span></div>
+                </div>
+
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <div>
+                        <label for="admin-email-input" class="block text-xs font-semibold text-zinc-300 mb-1 uppercase font-cinzel">E-mail</label>
+                        <input type="email" id="admin-email-input" value="admin@addict-tattoo.pl" required class="w-full px-4 py-2.5 rounded-xl bg-black/70 border border-zinc-800 focus:border-red-500 text-sm text-white">
+                    </div>
+                    <div>
+                        <label for="admin-pass-input" class="block text-xs font-semibold text-zinc-300 mb-1 uppercase font-cinzel">Hasło</label>
+                        <input type="password" id="admin-pass-input" value="admin123" required class="w-full px-4 py-2.5 rounded-xl bg-black/70 border border-zinc-800 focus:border-red-500 text-sm text-white">
+                    </div>
+                    <div id="admin-login-error" class="hidden text-xs text-rose-400 font-medium">
+                        Nieprawidłowy e-mail lub hasło.
+                    </div>
+                    <button type="submit" class="w-full btn-crimson py-3 rounded-xl text-xs uppercase tracking-wider font-bold mt-2">
+                        Zaloguj się
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard admina (po zalogowaniu) -->
+        <div id="admin-dashboard" class="hidden flex-1 p-4 sm:p-8 max-w-7xl mx-auto w-full space-y-8">
+            <!-- Statystyki -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div class="luxury-card-red p-4 rounded-2xl border border-red-500/25">
+                    <span class="text-xs text-zinc-400">Wszystkie Wizyty</span>
+                    <div id="stat-total" class="text-2xl font-bold text-white mt-1">0</div>
+                </div>
+                <div class="luxury-card-red p-4 rounded-2xl border border-amber-500/25">
+                    <span class="text-xs text-amber-300">Oczekujące</span>
+                    <div id="stat-pending" class="text-2xl font-bold text-amber-400 mt-1">0</div>
+                </div>
+                <div class="luxury-card-red p-4 rounded-2xl border border-emerald-500/25">
+                    <span class="text-xs text-emerald-300">Potwierdzone</span>
+                    <div id="stat-confirmed" class="text-2xl font-bold text-emerald-400 mt-1">0</div>
+                </div>
+                <div class="luxury-card-red p-4 rounded-2xl border border-blue-500/25">
+                    <span class="text-xs text-blue-300">Zrealizowane</span>
+                    <div id="stat-completed" class="text-2xl font-bold text-blue-400 mt-1">0</div>
+                </div>
+            </div>
+
+            <!-- Tabela 1: Aktywne Rezerwacje -->
+            <div class="luxury-card-red rounded-3xl p-6 border border-red-500/30 overflow-hidden shadow-2xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-display text-lg font-bold text-white">Aktywne Rezerwacje</h3>
+                        <p class="text-xs text-zinc-400">Nadchodzące wizyty oczekujące lub potwierdzone</p>
+                    </div>
+                    <button onclick="renderAdminDashboard()" class="text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5 p-2 rounded-lg bg-zinc-900 border border-zinc-800">
+                        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                        <span>Odśwież</span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-zinc-300">
+                        <thead class="bg-zinc-950/80 text-zinc-400 uppercase font-mono text-[10px] border-b border-zinc-800">
+                            <tr>
+                                <th class="p-3">Kod</th>
+                                <th class="p-3">Termin</th>
+                                <th class="p-3">Klient</th>
+                                <th class="p-3">Kontakt</th>
+                                <th class="p-3">Usługa & Detale</th>
+                                <th class="p-3">Inspiracja</th>
+                                <th class="p-3">Uwagi</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-active-table-body" class="divide-y divide-zinc-800/60 font-sans">
+                            <!-- Wiersze generowane w script.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabela 2: Historia Rezerwacji -->
+            <div class="luxury-card-red rounded-3xl p-6 border border-zinc-800 overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-display text-base font-bold text-zinc-200">Historia Rezerwacji</h3>
+                        <p class="text-xs text-zinc-500">Zrealizowane lub anulowane wizyty</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-zinc-400">
+                        <thead class="bg-zinc-950/60 text-zinc-500 uppercase font-mono text-[10px] border-b border-zinc-800">
+                            <tr>
+                                <th class="p-3">Kod</th>
+                                <th class="p-3">Termin</th>
+                                <th class="p-3">Klient</th>
+                                <th class="p-3">Usługa</th>
+                                <th class="p-3">Inspiracja</th>
+                                <th class="p-3">Uwagi</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Opcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-history-table-body" class="divide-y divide-zinc-800/40">
+                            <!-- Wiersze generowane w script.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL SUKCESU PO REZERWACJI ==================== -->
+    <div id="booking-success-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        <div class="luxury-card-red rounded-3xl p-6 sm:p-8 max-w-md w-full border border-red-500/40 shadow-2xl text-center">
+            <div class="w-16 h-16 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-2xl mx-auto mb-4 animate-bounce">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <h3 class="font-display text-2xl font-bold text-white mb-2">Rezerwacja Wysłana!</h3>
+            <p class="text-xs text-zinc-300 leading-relaxed mb-4">
+                Dziękujemy! Twoje zgłoszenie wpłynęło do kalendarza studia. Odezwiemy się wkrótce, aby potwierdzić sesję.
+            </p>
+
+            <div class="p-3.5 rounded-xl bg-black/60 border border-red-500/30 text-xs mb-6">
+                <span class="text-zinc-500 block uppercase tracking-wider font-mono text-[10px]">Twój Kod Rezerwacji:</span>
+                <span id="success-booking-code" class="text-lg font-bold font-mono text-red-400">#AT-000000</span>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <!-- W wersji demo widoczny jest przycisk Zobacz w Panelu Admina, usuwany w wersji finałowej produkcyjnej -->
+                <button id="success-modal-admin-btn" onclick="goToAdminFromSuccess()" class="btn-crimson py-3 rounded-xl text-xs uppercase tracking-wider font-bold">
+                    Zobacz w Panelu Admina (Demo)
+                </button>
+                <button onclick="closeSuccessModal()" class="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-xs text-zinc-400 hover:text-white transition">
+                    Wróć do strony
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL KONTAKTOWY DEMO BAR ==================== -->
+    <div id="demo-contact-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        <div class="luxury-card-red rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-red-500/40 shadow-2xl relative">
+            <button onclick="closeDemoContactModal()" class="absolute top-5 right-5 text-zinc-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full red-badge text-[11px] font-semibold mb-3">
+                <i class="fa-solid fa-laptop-code text-red-400"></i>
+                <span>Wdrożenie Dedykowanej Strony WWW</span>
+            </div>
+
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-white mb-3">
+                Zainteresowany wdrożeniem strony dla studia?
+            </h3>
+
+            <p class="text-xs text-zinc-300 leading-relaxed mb-5">
+                Ta witryna została zaprojektowana specjalnie pod profil studia <strong>Addict Tattoo (Łukasz Walczyński)</strong>. Zawiera w pełni zintegrowany kalendarz rezerwacji 24/7, panel administracyjny, bezpieczną kompresję zdjęć inspiracji oraz nowoczesny design dostosowany do urządzeń mobilnych.
+            </p>
+
+            <div class="space-y-3">
+                <div class="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                    <div class="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold mb-1">Kluczowe korzyści:</div>
+                    <ul class="text-xs text-zinc-300 space-y-1 list-disc list-inside">
+                        <li>Automatyzacja zapisów 24/7 – mniej czasu spędzonego na odpisywanie w DM</li>
+                        <li>Panel zarządzania klientami i historią wizyt</li>
+                        <li>Dedykowany design dark-crimson z autorskim logiem studia</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30">
+                    <div class="text-[10px] text-red-400 uppercase tracking-wider font-semibold mb-0.5">Kontakt z twórcą strony:</div>
+                    <div class="font-mono text-sm text-white font-bold break-all">kacperekwas1@gmail.com</div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeDemoContactModal()" class="btn-crimson px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold">
+                    Rozumiem
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LIGHTBOX PORTFOLIO ==================== -->
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl" onclick="handleLightboxBackdrop(event)">
+        <button onclick="closeLightbox()" class="absolute top-5 right-5 text-zinc-400 hover:text-white p-3 z-50 text-xl" title="Zamknij (Esc)">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <button onclick="prevLightboxImage()" class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-red-400 p-3 z-50 text-2xl" title="Poprzednie zdjęcie">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button onclick="nextLightboxImage()" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-red-400 p-3 z-50 text-2xl" title="Następne zdjęcie">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <div class="max-w-4xl max-h-[85vh] flex flex-col items-center justify-center p-2" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" alt="Powiększenie pracy Addict Tattoo" class="max-h-[70vh] max-w-full rounded-2xl object-contain border border-red-500/30 shadow-2xl">
+            <div class="mt-4 text-center">
+                <h4 id="lightbox-title" class="font-display text-base font-bold text-white">Tytuł pracy</h4>
+                <p id="lightbox-desc" class="text-xs text-zinc-400 mt-0.5">Opis stylu i wykonania</p>
+                <span id="lightbox-counter" class="text-[11px] text-red-400 font-mono mt-2 inline-block">1 / 4</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL PODGLĄDU ZDJĘCIA DLA ADMINA ==================== -->
+    <div id="admin-photo-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onclick="closeAdminPhotoModal()">
+        <div class="luxury-card-red rounded-3xl p-6 max-w-lg w-full border border-red-500/40 relative" onclick="event.stopPropagation()">
+            <button onclick="closeAdminPhotoModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h4 class="font-display text-base font-bold text-white mb-3">Inspiracja nadesłana przez klienta</h4>
+            <div class="w-full max-h-[60vh] overflow-hidden rounded-xl bg-black border border-zinc-800 flex items-center justify-center">
+                <img id="admin-photo-modal-img" src="" alt="Inspiracja klienta" class="max-h-[58vh] object-contain">
+            </div>
+            <div class="mt-3 text-xs text-zinc-400" id="admin-photo-modal-caption"></div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL POLITYKA PRYWATNOŚCI ==================== -->
+    <div id="privacy-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="luxury-card-red rounded-3xl p-6 sm:p-8 max-w-2xl w-full border border-red-500/40 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
+                <h3 class="font-display text-lg font-bold text-white">Polityka Prywatności & RODO</h3>
+                <button onclick="closePrivacyModal()" class="text-zinc-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto py-4 text-xs text-zinc-300 space-y-3 pr-2">
+                <p><strong>1. Administrator Danych:</strong> Administratorem danych osobowych jest studio Addict Tattoo - Łukasz Walczyński z siedzibą przy ul. Lwowskiej 238 A, 33-300 Nowy Sącz.</p>
+                <p><strong>2. Cel przetwarzania:</strong> Dane podane w formularzu rezerwacyjnym (imię, nazwisko, numer telefonu, adres e-mail, rodzaj usługi, opis oraz zdjęcia inspiracji) przetwarzane są wyłącznie w celu kontaktu oraz realizacji sesji tatuażu lub piercingu.</p>
+                <p><strong>3. Przechowywanie danych:</strong> Dane rezerwacji są bezpiecznie przechowywane lokalnie. Klient ma w każdej chwili prawo wglądu, sprostowania lub żądania usunięcia swoich danych.</p>
+                <p><strong>4. Kontakt:</strong> W sprawach związanych z danymi osobowymi prosimy o kontakt pod numerem telefonu 504 989 112.</p>
+            </div>
+            <div class="pt-4 border-t border-zinc-800 flex justify-end">
+                <button onclick="closePrivacyModal()" class="btn-crimson px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider font-bold">
+                    Zamknij
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== WŁASNY MODAL POWIADOMIEŃ (ZAMIAST BASIC ALERT) ==================== -->
+    <div id="custom-alert-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        <div class="luxury-card-red rounded-3xl p-6 sm:p-7 max-w-sm w-full border border-red-500/40 shadow-2xl text-center">
+            <div id="custom-alert-icon-container" class="w-14 h-14 rounded-2xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 text-xl mx-auto mb-4 shadow-[0_0_20px_rgba(220,38,38,0.25)]">
+                <i id="custom-alert-icon" class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h4 id="custom-alert-title" class="font-display text-lg font-bold text-white mb-2">Powiadomienie</h4>
+            <p id="custom-alert-message" class="text-xs text-zinc-300 leading-relaxed mb-6">Treść powiadomienia</p>
+            <button type="button" onclick="closeCustomAlert()" class="btn-crimson w-full py-3 rounded-xl text-xs uppercase tracking-wider font-bold">
+                Rozumiem
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== WŁASNY MODAL CONFIRM (ZAMIAST BASIC CONFIRM) ==================== -->
+    <div id="custom-confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        <div class="luxury-card-red rounded-3xl p-6 sm:p-7 max-w-sm w-full border border-red-500/40 shadow-2xl text-center">
+            <div class="w-14 h-14 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 text-xl mx-auto mb-4">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h4 id="custom-confirm-title" class="font-display text-lg font-bold text-white mb-2">Potwierdzenie</h4>
+            <p id="custom-confirm-message" class="text-xs text-zinc-300 leading-relaxed mb-6">Czy na pewno chcesz wykonać tę akcję?</p>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="closeCustomConfirm(false)" class="w-1/2 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-300 transition">
+                    Anuluj
+                </button>
+                <button type="button" id="custom-confirm-yes-btn" onclick="closeCustomConfirm(true)" class="w-1/2 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs uppercase tracking-wider font-bold transition">
+                    Usuń
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skrypt Główny -->
+    <script src="script.js"></script>
+</body>
+</html>

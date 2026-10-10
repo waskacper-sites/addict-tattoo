@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   ADDICT TATTOO & PIERCING - Nowy Sącz | Arkusz stylów
+   Klimat: Czerń + Karmazynowa Czerwień (Dark Aesthetic, Minimalist Luxury)
+   Mocne nagłówki, subtelny czysty tekst
+   ========================================================================== */
+
+:root {
+    --bg-dark: #070709;
+    --bg-card: rgba(15, 15, 19, 0.78);
+    --bg-card-hover: rgba(22, 22, 28, 0.92);
+    
+    --crimson-primary: #dc2626;
+    --crimson-light: #ef4444;
+    --crimson-glow: rgba(220, 38, 38, 0.4);
+    --crimson-subtle: rgba(220, 38, 38, 0.12);
+    --crimson-border: rgba(220, 38, 38, 0.35);
+
+    --text-white: #f8fafc;
+    --text-muted: #94a3b8;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+}
+
+body {
+    background-color: var(--bg-dark);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Mocne, wyraziste nagłówki displayowe */
+.font-display {
+    font-family: 'Syne', 'Oswald', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.font-serif-clean {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+}
+
+/* Gradienty tekstowe z karmazynową czerwienią */
+.text-crimson-gradient {
+    background: linear-gradient(135deg, #ffffff 0%, #fca5a5 45%, #ef4444 80%, #dc2626 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-red-glow {
+    text-shadow: 0 0 25px rgba(220, 38, 38, 0.45);
+}
+
+/* Luksusowe karty z subtelną czerwoną poświatą */
+.luxury-card-red {
+    background: var(--bg-card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--crimson-border);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card-red:hover {
+    border-color: rgba(239, 68, 68, 0.7);
+    box-shadow: 0 10px 35px -5px rgba(220, 38, 38, 0.22);
+    transform: translateY(-2px);
+}
+
+/* Etykiety i badge */
+.red-badge {
+    background: rgba(220, 38, 38, 0.12);
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    color: #fca5a5;
+}
+
+/* Czerwony przycisk CTA */
+.btn-crimson {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 60%, #b91c1c 100%);
+    color: #ffffff;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.35);
+}
+
+.btn-crimson:hover {
+    box-shadow: 0 6px 28px rgba(220, 38, 38, 0.55);
+    transform: translateY(-1px);
+    filter: brightness(1.12);
+}
+
+/* Animacja Pływających Orbów na Canvasie */
+#ambient-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.65;
+}
+
+/* Scroll Reveal */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* Kalendarz Rezerwacji */
+.cal-day-free {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #f1f5f9;
+}
+
+.cal-day-free:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.7);
+    transform: translateY(-1px);
+}
+
+.cal-day-partial {
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.45);
+    color: #fef08a;
+}
+
+.cal-day-partial:hover:not(:disabled) {
+    background: rgba(234, 179, 8, 0.22);
+    border-color: rgba(234, 179, 8, 0.8);
+    transform: translateY(-1px);
+}
+
+.cal-day-full {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+}
+
+.cal-day-full:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.cal-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.cal-dot-free { background-color: #10b981; }
+.cal-dot-partial { background-color: #eab308; }
+.cal-dot-full { background-color: #ef4444; }
+
+.calendar-day-btn.selected {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    border-color: #f87171 !important;
+    box-shadow: 0 0 25px rgba(220, 38, 38, 0.5);
+}
+
+.calendar-day-btn.today {
+    border: 1px dashed rgba(239, 68, 68, 0.7);
+}
+
+/* Slot godzinowy */
+.time-slot-btn {
+    transition: all 0.2s ease;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: #e2e8f0;
+}
+
+.time-slot-btn:hover:not(:disabled) {
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(239, 68, 68, 0.55);
+}
+
+.time-slot-btn.selected {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+    border-color: #fca5a5 !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.45);
+}
+
+/* Kafel wyboru usługi w wizardzie */
+.service-select-card {
+    transition: all 0.25s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(20, 20, 26, 0.6);
+}
+
+.service-select-card:hover {
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(30, 20, 24, 0.7);
+}
+
+.service-select-card.active {
+    border-color: var(--crimson-primary) !important;
+    background: rgba(220, 38, 38, 0.14) !important;
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.25);
+}
+
+/* Akordeon FAQ */
+details.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+details.faq-item summary {
+    list-style: none;
+}
+details.faq-item[open] summary .faq-chevron {
+    transform: rotate(180deg);
+}
+details.faq-item .faq-content {
+    animation: faqExpand 0.35s ease-out;
+}
+@keyframes faqExpand {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Własny suwak (Custom Scrollbar) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #070709;
+}
+::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #dc2626;
+}
